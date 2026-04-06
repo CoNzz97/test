@@ -191,6 +191,17 @@ async function setFesFunHoloPeekModuleEnabled(moduleId, nextEnabled) {
   return didSetModuleState != null ? didSetModuleState : false;
 }
 
+async function setHoloPeekWindowBoolean(functionName, nextEnabled) {
+  await window.waitForFunc(functionName);
+
+  const handler = window[functionName];
+  if (typeof handler !== "function") {
+    return false;
+  }
+
+  return handler(nextEnabled);
+}
+
 function disableHoloPeekOption(optionId) {
   const $checkbox = $(`#${optionId}`);
   if ($checkbox.length && $checkbox.prop("checked")) {
@@ -433,6 +444,66 @@ export const holoPeekObjects = [
       })();
     },
     group: "Fun Modules",
+  },
+  {
+    optionName: "MahjongMode",
+    optionDescription: "Mahjong Mode",
+    group: "Fun Modules",
+    optionFunc: () => {
+      (async () => {
+        await setHoloPeekWindowBoolean("setMahjongModeEnabled", true);
+      })();
+    },
+    cleanupFunc: () => {
+      (async () => {
+        await setHoloPeekWindowBoolean("setMahjongModeEnabled", false);
+      })();
+    },
+  },
+  {
+    optionName: "MahjongLurk",
+    optionDescription: "Mahjong Lurk",
+    group: "Fun Modules",
+    optionFunc: () => {
+      (async () => {
+        await setHoloPeekWindowBoolean("setMahjongLurkEnabled", true);
+      })();
+    },
+    cleanupFunc: () => {
+      (async () => {
+        await setHoloPeekWindowBoolean("setMahjongLurkEnabled", false);
+      })();
+    },
+  },
+  {
+    optionName: "toggleRemoveVideo",
+    optionDescription: "Disable Ctrl+1",
+    group: "Chat",
+    optionFunc: () => {
+      (async () => {
+        await setHoloPeekWindowBoolean("setToggleRemoveVideoShortcutEnabled", false);
+      })();
+    },
+    cleanupFunc: () => {
+      (async () => {
+        await setHoloPeekWindowBoolean("setToggleRemoveVideoShortcutEnabled", true);
+      })();
+    },
+  },
+  {
+    optionName: "toggleRemoveVideoUntilNext",
+    optionDescription: "Disable Ctrl+2",
+    group: "Chat",
+    optionFunc: () => {
+      (async () => {
+        await setHoloPeekWindowBoolean("setToggleRemoveVideoUntilNextShortcutEnabled", false);
+      })();
+    },
+    cleanupFunc: () => {
+      (async () => {
+        await setHoloPeekWindowBoolean("setToggleRemoveVideoUntilNextShortcutEnabled", true);
+      })();
+    },
   },
   {
     optionName: "customCSS",

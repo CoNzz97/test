@@ -87,33 +87,20 @@ const ctrlKeyComboEvents = {
     }
 };
 
-let disableRemoveVideoHoloPeek = 
-{
-    optionName: "toggleRemoveVideo", 
-    optionDescription: "Disable 'Ctrl+1'", 
-    optionFunc: () => allowToggleRemoveVideo = false,
-    cleanupFunc: () => allowToggleRemoveVideo = true
-};
-//RemoveVideoUntilNext
-let disableRVUNHoloPeek = 
-{
-    optionName: "toggleRemoveVideoUntilNext", 
-    optionDescription: "Disable 'Ctrl+2'", 
-    optionFunc: () => allowToggleRemoveVideoUntilNext = false,
-    cleanupFunc: () => allowToggleRemoveVideoUntilNext = true
-};
+export function setToggleRemoveVideoShortcutEnabled(nextEnabled) {
+    allowToggleRemoveVideo = Boolean(nextEnabled);
+    return allowToggleRemoveVideo;
+}
 
-(async function kurosuWantsAToggleAndImLazy() {
-    await window.waitForFunc("createHoloPeekItem");
-    await window.waitForFunc("addToHoloPeekContainer");
+export function setToggleRemoveVideoUntilNextShortcutEnabled(nextEnabled) {
+    allowToggleRemoveVideoUntilNext = Boolean(nextEnabled);
+    return allowToggleRemoveVideoUntilNext;
+}
 
-    let disableRemoveVideoToggle = window.createHoloPeekItem(disableRemoveVideoHoloPeek);
-    let disableRemoveVideoUntilNextToggle = window.createHoloPeekItem(disableRVUNHoloPeek);
-    
-    window.addToHoloPeekContainer(disableRemoveVideoToggle);
-    window.addToHoloPeekContainer(disableRemoveVideoUntilNextToggle);
-    
-})();
+if (typeof window !== "undefined") {
+    window.setToggleRemoveVideoShortcutEnabled = setToggleRemoveVideoShortcutEnabled;
+    window.setToggleRemoveVideoUntilNextShortcutEnabled = setToggleRemoveVideoUntilNextShortcutEnabled;
+}
 
 $(window).on('keydown', (event) => {
     if (event.ctrlKey && !event.shiftKey) {

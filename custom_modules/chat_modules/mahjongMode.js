@@ -1,4 +1,13 @@
-const $textInputBox = $('#chatline');
+let mahjongModeEnabled = false;
+let mahjongLurkEnabled = false;
+
+function getTextInputBox() {
+  if (typeof $ !== "function") {
+    return null;
+  }
+
+  return $("#chatline");
+}
 
 function formatMJMessage($messageElement) {
   if (!$messageElement.text().startsWith('MJ:')) {
@@ -27,14 +36,14 @@ function toggleSingleMJMessage($messageElement, canRead) {
 }
 
 function toggleMJMessages(self) {
-  let canRead = self.checkbox.prop('checked');
+  let canRead = self && self.checkbox ? self.checkbox.prop('checked') : canReadMJMessages();
   $('#messagebuffer [class|="MahjongMessage"]').each((_, element) => {
     let $jqElement = $(element)
     toggleSingleMJMessage($jqElement, canRead);
   })
 }
 
-const secretMJEmotes = [
+export const secretMJEmotes = [
   { name: ":nyaggernap:", image: "https://raw.githubusercontent.com/puchigire/r/emotes/emotes/nyaggernap.jpg"},
   { name: ":yakuless:", image: "https://raw.githubusercontent.com/puchigire/r/emotes/emotes/yakuless.gif" },
   { name: ":nightynightnyagger:", image: "https://raw.githubusercontent.com/puchigire/r/emotes/emotes/nightynightnyagger.png" },
@@ -45,7 +54,7 @@ const secretMJEmotes = [
   { name: ":nyaggerfish:", image: "https://raw.githubusercontent.com/puchigire/r/emotes/emotes/nyaggerfish.png" }  
 ]
 
-function sanitizeText(str) {
+export function sanitizeText(str) {
     str = str.replace(/&/g, "&amp;")
               .replace(/</g, "&lt;")
               .replace(/>/g, "&gt;")
@@ -53,61 +62,117 @@ function sanitizeText(str) {
     return str;
 }
 
-function turnMahjongEmotesReal(emotes) {
-  emotes.forEach(function (emote) {
-    emote.regex = new RegExp(emote.source, "gi");
-    CHANNEL.emotes.push(emote);
-    CHANNEL.emoteMap[sanitizeText(emote.name)] = emote;
-  })
+function escapeRegExp(value) {
+  return String(value || "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-function prependMahjongMode(self) {
-  $textInputBox.on('input.prependMJ focus.prependMJ', 
-    () => prependMessagesWithMJ($textInputBox));
-  toggleMJMessages(self);
+function createMahjongEmoteDefinition(emote) {
+  const source = String(emote?.source || escapeRegExp(emote?.name || ""));
+  return {
+    ...emote,
+    source,
+    regex: new RegExp(source, "gi"),
+  };
 }
 
-function removeMahjongMode(self) {
-  $textInputBox.off('input.prependMJ focus.prependMJ')
-  $textInputBox.val($textInputBox.val().replace(/^MJ: /, ''));
-  toggleMJMessages(self);
-}
-
-
-let MahjongModeHoloPeekItem = 
-  {
-    optionName: "MahjongMode", 
-    optionDescription: "Mahjong Mode", 
-    optionFunc: prependMahjongMode,
-    cleanupFunc: removeMahjongMode
+export function syncMahjongEmotes(channel, isEnabled, emotes = secretMJEmotes) {
+  if (
+    !channel ||
+    !Array.isArray(channel.emotes) ||
+    !channel.emoteMap ||
+    typeof channel.emoteMap !== "object"
+  ) {
+    return false;
   }
 
-let MahjongLurkHoloPeekItem = {
-  optionName: 'MahjongLurk',
-  optionDescription: 'Mahjong Lurk',
-  optionFunc: toggleMJMessages,
-  cleanupFunc: toggleMJMessages
-};
+  const mahjongKeys = new Set(
+    emotes.map((emote) => sanitizeText(emote.name)),
+  );
 
-function canReadMJMessages() {
-  return MahjongLurkHoloPeekItem.checkbox.prop('checked') ||
-          MahjongModeHoloPeekItem.checkbox.prop('checked')
+  channel.emotes = channel.emotes.filter(
+    (emote) => !mahjongKeys.has(sanitizeText(emote?.name || "")),
+  );
+
+  for (const key of mahjongKeys) {
+    delete channel.emoteMap[key];
+  }
+
+  if (!isEnabled) {
+    return true;
+  }
+
+  for (const emote of emotes) {
+    const normalizedEmote = createMahjongEmoteDefinition(emote);
+    const mapKey = sanitizeText(normalizedEmote.name);
+    if (channel.emoteMap[mapKey]) {
+      continue;
+    }
+
+    channel.emotes.push(normalizedEmote);
+    channel.emoteMap[mapKey] = normalizedEmote;
+  }
+
+  return true;
 }
 
+function refreshMahjongMessages() {
+  if (typeof $ !== "function") {
+    return;
+  }
 
-(async function insertMahjongModeIntoHoloPeek() {
+  toggleMJMessages();
+}
 
-  await window.waitForFunc("createHoloPeekItem");
-  await window.waitForFunc("addToHoloPeekContainer");
+function canReadMJMessages() {
+  return mahjongModeEnabled || mahjongLurkEnabled;
+}
 
-  MahjongLurkHoloPeekItem = window.createHoloPeekItem(MahjongLurkHoloPeekItem);
-  MahjongModeHoloPeekItem = window.createHoloPeekItem(MahjongModeHoloPeekItem);
+function syncRuntimeMahjongEmotes() {
+  if (typeof CHANNEL === "undefined") {
+    return false;
+  }
 
-  window.addToHoloPeekContainer(MahjongLurkHoloPeekItem, true);
-  window.addToHoloPeekContainer(MahjongModeHoloPeekItem, true);
+  return syncMahjongEmotes(CHANNEL, canReadMJMessages());
+}
 
-  await window.waitForFunc("MESSAGE_PROCESSOR")
+export function setMahjongModeEnabled(nextEnabled) {
+  mahjongModeEnabled = Boolean(nextEnabled);
+  const $textInputBox = getTextInputBox();
 
-  MESSAGE_PROCESSOR.addTap(formatMJMessage);
-  turnMahjongEmotesReal(secretMJEmotes);  
-})();
+  if ($textInputBox && $textInputBox.length) {
+    $textInputBox.off("input.prependMJ focus.prependMJ");
+
+    if (mahjongModeEnabled) {
+      $textInputBox.on("input.prependMJ focus.prependMJ", () =>
+        prependMessagesWithMJ($textInputBox),
+      );
+    } else {
+      $textInputBox.val($textInputBox.val().replace(/^MJ: /, ""));
+    }
+  }
+
+  syncRuntimeMahjongEmotes();
+  refreshMahjongMessages();
+  return mahjongModeEnabled;
+}
+
+export function setMahjongLurkEnabled(nextEnabled) {
+  mahjongLurkEnabled = Boolean(nextEnabled);
+  syncRuntimeMahjongEmotes();
+  refreshMahjongMessages();
+  return mahjongLurkEnabled;
+}
+
+if (typeof window !== "undefined") {
+  window.setMahjongModeEnabled = setMahjongModeEnabled;
+  window.setMahjongLurkEnabled = setMahjongLurkEnabled;
+}
+
+if (typeof window !== "undefined" && typeof window.waitForFunc === "function") {
+  (async () => {
+    await window.waitForFunc("MESSAGE_PROCESSOR")
+
+    MESSAGE_PROCESSOR.addTap(formatMJMessage);
+    syncRuntimeMahjongEmotes();
+  })();
+}
