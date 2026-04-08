@@ -3,6 +3,7 @@ const STYLES = {
     CONFETTI_STYLE: `custom_modules/custom_css_injection/confetti-css.js`,
     HOLOPEEK_STYLE: `custom_modules/custom_css_injection/holoPeek-css.js`,
     MIKU_MIKU_BEAM_STYLE: `custom_modules/custom_css_injection/mikuMikuBeam-css.js`,
+    NUKE_STYLE: `custom_modules/custom_css_injection/nuke-css.js`,
     MIGOBOTE_GOLD_STYLE: `custom_modules/custom_css_injection/migobotegold-css.js`,
     NINO_MODE_STYLE: `custom_modules/custom_css_injection/ninoMode-css.js`,
     TIME_TOKEN_STYLE: `custom_modules/custom_css_injection/timeToken-css.js`,

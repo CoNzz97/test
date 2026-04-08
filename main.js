@@ -18,7 +18,7 @@ if (![CHANNEL.name].favicon) {
 const LOCAL_CDN_URL = "https://127.0.0.1:5050"; //change before push
 const ONLINE_CDN = "https://mikobotecdn.win";
 //CHANGE WHEN DEVELOPING/LIVE
-const CURRENT_CDN = ONLINE_CDN;
+const CURRENT_CDN = LOCAL_CDN_URL;
 
 const MODULES_FOLDER = "custom_modules/";
 const MODULE_LOADER = `${MODULES_FOLDER}module_orchestration/ModuleLoader.js`;
@@ -58,6 +58,7 @@ const ModulePaths = [
   { VolumeControl: `volumeControl.js` },
   { MessageModifications: `chat_modules/messageModifications.js` },
   { MikuMikuBeam: `fes_fun/mikuMikuBeam.js` },
+  { Nuke: `fes_fun/nuke.js` },
   { UserWordReplacement: `fes_fun/userWordReplacement.js` },
   { MigoboteGold: `fes_fun/migobotegold.js` },
   { UohMode: `fes_fun/uohmode.js` },
