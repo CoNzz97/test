@@ -25,21 +25,24 @@ This is basically just the "cytube plus" motd ripped out.
 
 Plain text or normal HTML still works. If you want tabs, put each tab in a
 top-level element with `data-motd-tab`.
+The below CSS will give you this
+<img src="https://raw.githubusercontent.com/om3tcw/r/refs/heads/emotes/other/MOTD%20Example.png">
 
 ```html
-<div data-motd-tab="Home">
-  <p>Welcome to /hlgg/.</p>
+<div data-motd-tab="Streams">
+  <div style="display:flex;justify-content:center;gap:6px;font-size:12px;flex-wrap:wrap">
+    <a href="https://www.youtube.com/watch?v=QmxzjAsWqAI">MangoJohn Announce - 12/09</a> |
+    <a href="https://www.youtube.com/watch?v=AY1v8-jOZxk">Mori 6th Anniversary Live - 12/09</a> |
+    <a href="https://holodex.net/watch/Hre-BogsNJg">Ina 6th Anni Outfit - 14/09</a>
+  </div>
 </div>
 
-<div data-motd-tab="Rules">
-  <ul>
-    <li>Rule one</li>
-    <li>Rule two</li>
-  </ul>
+<div data-motd-tab="Concerts">
+<div style="display:flex;justify-content:center;gap:6px;font-size:12px;flex-wrap:wrap">  
+<a href="https://spwn.jp/events/evt_26100602-engirys1stlive">IRyS 1st Concert HOPE - 06/10</a>|
+<a href="https://spwn.jp/events/evt_26102902-engmiko2ndlive">Sakura Miko 2nd Live "Blooming Parade!!" - 29/10</a>|
+<a href="https://spwn.jp/events/evt_26112902-engreglossarlive">ReGLOSS AR LIVE「X-ReCHORD」 - 29/11</a>|
 </div>
-
-<div data-motd-tab="Links">
-  <p><a href="https://om3tcw.com/r/hlgg">Channel link</a></p>
 </div>
 ```
 
