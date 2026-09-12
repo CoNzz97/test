@@ -24,7 +24,7 @@
 This is basically just the "cytube plus" motd ripped out.
 
 Plain text or normal HTML still works. If you want tabs, put each tab in a
-top-level element with `data-motd-tab`.
+top-level element with `data-motd-tab`. <br>
 The below CSS will give you this
 <img src="https://raw.githubusercontent.com/om3tcw/r/refs/heads/emotes/other/MOTD%20Example.png">
 
