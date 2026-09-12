@@ -9,9 +9,9 @@
     #motdwrap {
       --hlgg-motd-max-height: min(280px, 34vh);
       --hlgg-motd-mobile-max-height: min(360px, 44vh);
-      --hlgg-motd-panel-padding: 8px 12px;
-      --hlgg-motd-single-panel-padding: 6px 40px 6px 10px;
-      --hlgg-motd-logo-size: 56px;
+      --hlgg-motd-panel-padding: 4px 8px;
+      --hlgg-motd-single-panel-padding: 4px 34px 4px 8px;
+      --hlgg-motd-logo-size: 44px;
 
       max-height: var(--hlgg-motd-max-height) !important;
       min-height: 0 !important;
@@ -36,7 +36,7 @@
       position: sticky;
       top: 0;
       z-index: 2;
-      margin: 8px 8px 0 0;
+      margin: 4px 6px 0 0;
       color: #f4f1e8;
       opacity: 0.78;
       text-shadow: none;
@@ -57,8 +57,9 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      width: calc(var(--hlgg-motd-logo-size) + 20px);
-      padding: 10px;
+      width: calc(var(--hlgg-motd-logo-size) + 12px);
+      padding: 6px;
+      box-sizing: border-box;
       border-right: 1px solid rgba(255, 255, 255, 0.1);
       background: rgba(255, 255, 255, 0.04);
     }
@@ -79,27 +80,30 @@
     }
 
     #hlgg-motd-main {
+      display: grid;
+      grid-template-rows: auto 1fr;
       min-width: 0;
+      min-height: calc(var(--hlgg-motd-logo-size) + 12px);
     }
 
     #hlgg-motd-tabs {
       display: flex;
       flex-wrap: wrap;
-      gap: 4px;
-      padding: 8px 42px 0 10px;
+      gap: 3px;
+      padding: 4px 34px 0 6px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     .hlgg-motd-tab {
       flex: 0 1 auto;
       min-width: 0;
-      padding: 5px 9px;
+      padding: 3px 7px;
       color: #dfe8e4;
       background: rgba(255, 255, 255, 0.06);
       border: 1px solid rgba(255, 255, 255, 0.12);
       border-bottom: 0;
       border-radius: 4px 4px 0 0;
-      font-size: 12px;
+      font-size: 10px;
       font-weight: 700;
       line-height: 1.2;
       text-align: center;
@@ -120,11 +124,20 @@
     }
 
     #hlgg-motd-panel {
+      display: grid;
+      align-items: center;
+      justify-items: center;
       min-width: 0;
-      padding: var(--hlgg-motd-panel-padding);
+      min-height: 0;
+      padding: 2px 8px 4px 8px;
       font-size: 13px;
       line-height: 1.45;
       overflow-wrap: anywhere;
+    }
+
+    #hlgg-motd-panel > div {
+      margin: 0;
+      align-items: center;
     }
 
     #hlgg-motd-shell.hlgg-motd-shell-single #hlgg-motd-panel {
@@ -132,7 +145,7 @@
     }
 
     #hlgg-motd-panel p {
-      margin: 0 0 8px;
+      margin: 0 0 4px;
     }
 
     #hlgg-motd-panel p:last-child {
@@ -141,7 +154,7 @@
 
     #hlgg-motd-panel ul,
     #hlgg-motd-panel ol {
-      margin: 6px 0 8px 22px;
+      margin: 4px 0 4px 18px;
       padding: 0;
     }
 
@@ -169,7 +182,7 @@
       }
 
       #hlgg-motd-tabs {
-        padding-right: 38px;
+        padding-right: 32px;
       }
     }
   `;
